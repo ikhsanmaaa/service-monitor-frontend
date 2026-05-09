@@ -12,7 +12,7 @@ export interface DataService {
   messageStatus: string | null;
 
   lastLatency: number | null;
-  lastCheckedAt: Date | null;
+  lastCheckedAt: string | null;
 }
 
 export type PayloadCreateService = {
@@ -22,10 +22,7 @@ export type PayloadCreateService = {
 };
 
 export type PayloadUpdateService = {
-  id: string;
-  name: string;
-  url: string;
-  category: string;
-  lastLatency: string;
-  lastCheckedAt: string;
+  name?: string;
+  url?: string;
+  category?: string;
 };

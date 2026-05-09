@@ -19,7 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
 import type { DataService } from "@/types/service";
 
-export default function Overview() {
+export default function Dashboard() {
   const { data, isLoading, error } = useServices();
 
   const services: DataService[] = data?.data ?? [];

@@ -1,5 +1,5 @@
 import DialogColumnDone from "@/components/common/dialog-column-done";
-import { DialogTask } from "@/components/common/dialog-update";
+import { DialogService } from "@/components/common/dialog-service";
 import { Button } from "@/components/ui/button";
 import { useCreateService } from "@/hooks/useServiceMutation";
 import type { PayloadCreateService } from "@/types/service";
@@ -11,8 +11,8 @@ export default function Services() {
 
   const { mutate: mutateCreate } = useCreateService();
 
-  const handleCreateService = (data: PayloadCreateService) => {
-    mutateCreate(data);
+  const handleCreateService = (payload: PayloadCreateService) => {
+    mutateCreate(payload);
     setOpen(false);
   };
 
@@ -38,10 +38,10 @@ export default function Services() {
         </Button>
       </div>
 
-      <DialogTask
-        type="add"
+      <DialogService
+        type="create"
         openDialog={open}
-        handleSubmit={handleCreateService}
+        onSubmit={handleCreateService}
         onOpenDialog={setOpen}
       />
       <DialogColumnDone

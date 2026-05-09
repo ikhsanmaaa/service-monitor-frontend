@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { DialogTask } from "@/components/common/dialog-update";
 import { DialogDelete } from "@/components/common/dialog-delete";
 import { useDeleteService, useUpdateService } from "@/hooks/useServiceMutation";
+import { DialogService } from "@/components/common/dialog-service";
 
 export default function ServiceRow({ data }: { data: DataService }) {
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -24,8 +24,15 @@ export default function ServiceRow({ data }: { data: DataService }) {
 
   const { mutate: mutateUpdate } = useUpdateService();
 
-  const handleUpdateService = (data: PayloadUpdateService) => {
-    mutateUpdate(data);
+  const handleUpdateService = (payload: PayloadUpdateService) => {
+    mutateUpdate({
+      id: data.id,
+      payload,
+    });
+  };
+
+  const handleDeleteService = () => {
+    mutateDelete(data.id);
   };
 
   return (
@@ -111,17 +118,17 @@ export default function ServiceRow({ data }: { data: DataService }) {
         </div>
       </CardContent>
 
-      <DialogTask
+      <DialogService
         type="update"
         openDialog={openUpdate}
-        handleSubmit={handleUpdateTask}
+        onSubmit={handleUpdateService}
         onOpenDialog={setOpenUpdate}
       />
 
       <DialogDelete
         openDialog={openDelete}
         onOpenDialog={setOpenDelete}
-        handleSubmit={handleDeleteTask}
+        handleSubmit={handleDeleteService}
       />
     </Card>
   );

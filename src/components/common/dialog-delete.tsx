@@ -22,9 +22,9 @@ export function DialogDelete({
     <Dialog open={openDialog} onOpenChange={onOpenDialog}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Delete Task</DialogTitle>
+          <DialogTitle>Delete Service</DialogTitle>
           <DialogDescription>
-            Are you sure want to delete this task?
+            Are you sure want to delete this service?
           </DialogDescription>
         </DialogHeader>
 
