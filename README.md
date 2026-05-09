@@ -1,73 +1,172 @@
-# React + TypeScript + Vite
+# Service Monitor Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend dashboard for a centralized monitoring system.
 
-Currently, two official plugins are available:
+This project was built as part of the NUXA Fullstack Developer Technical Test.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Repository:
+https://github.com/ikhsanmaaa/service-monitor-frontend.git
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Features
 
-## Expanding the ESLint configuration
+## Monitoring Dashboard
+- Realtime-ish monitoring dashboard
+- Monitoring statistics
+- Service status visualization
+- Latency visualization
+- Last checked timestamp display
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Service Management
+- Create service
+- Update service
+- Delete service
+- Manual force re-check
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## UI Features
+- Responsive dashboard layout
+- Monitoring table UI
+- Status badges
+- Loading states
+- Error handling
+- Auto refresh polling
+- Dashboard charts
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Tech Stack
+
+- React
+- TypeScript
+- Vite
+- TailwindCSS
+- TanStack Query
+- React Hook Form
+- Zod
+- Recharts
+- shadcn/ui
+- Lucide React
+
+---
+
+# Frontend Architecture
+
+The frontend uses a feature-based folder structure.
+
+```txt
+src/
+├── api
+├── components
+├── features
+├── hooks
+├── pages
+├── types
+├── utils
+└── lib
+````
+
+---
+
+# Run Frontend
+
+## Install Dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Configure Environment
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create `.env` file:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+---
+
+## Run Development Server
+
+```bash
+npm run dev
+```
+
+Frontend will run on:
+
+```txt
+http://localhost:5173
+```
+
+---
+
+# Realtime Monitoring
+
+The dashboard uses TanStack Query polling to create realtime-ish monitoring behavior.
+
+```ts
+refetchInterval: 30000
+```
+
+This allows service status updates without manually refreshing the browser.
+
+---
+
+# Architecture Decisions
+
+Although Angular was preferred in the requirement, React + TypeScript was chosen because I was more comfortable and productive with the ecosystem.
+
+This allowed me to focus more on implementing realtime monitoring behavior, API integration, and improving the overall user experience within the limited test duration.
+
+The UI was designed to be simple, clean, and easy to scan quickly, inspired by monitoring/admin dashboard layouts.
+
+---
+
+# Challenge Log
+
+One challenge during frontend development was designing a monitoring table layout that remained readable while displaying many service attributes at once.
+
+Initially, the layout felt cluttered and difficult to scan. I improved this by restructuring the UI into a cleaner monitoring-style table with better spacing and status indicators.
+
+Another challenge was synchronizing frontend realtime updates with backend scheduled health checks. Sometimes the dashboard showed stale data because the frontend cache was not updating correctly.
+
+This was solved by implementing automatic polling and improving query invalidation handling.
+
+I also encountered several issues related to TypeScript typing, React Query mutation handling, and chart rendering with Recharts.
+
+---
+
+# Suggested Demo
+
+Recommended demo flow:
+
+1. Show dashboard overview
+2. Create new monitored service
+3. Trigger manual re-check
+4. Show automatic scheduler update
+5. Demonstrate realtime polling update
+6. Show UP/DOWN status changes
+
+---
+
+# Future Improvements
+
+Possible future improvements:
+
+* Historical monitoring chart
+* WebSocket support
+* Search & filtering
+* Dark mode
+* Notification system
+* Advanced monitoring analytics
+
+---
+
+# Author
+
+Ikhsan Maulana Akbar
+
+```
 ```
