@@ -1,6 +1,5 @@
 export const NAV_ITEMS = [
-  { label: "Overview", path: "/" },
-  { label: "Board", path: "/board" },
+  { label: "Dashboard", path: "/" },
+  { label: "Service", path: "/service" },
   { label: "List", path: "/list" },
-  { label: "Timeline", path: "/timeline" },
 ];

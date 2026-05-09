@@ -16,7 +16,6 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/service" element={<Services />} />
           <Route path="/list" element={<List />} />
-          {/* <Route path="/timeline" element={<Timeline />} /> */}
         </Routes>
       </div>
     </div>
