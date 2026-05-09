@@ -1,15 +1,31 @@
-import type { DateValues } from "date-fns";
+export type ServiceStatus = "UP" | "DOWN";
 
-type ServiceStatus = "UP" | "DOWN";
-
-export type Service = {
+export interface DataService {
   id: string;
   name: string;
   url: string;
   category: string;
+
   serviceStatus: ServiceStatus;
-  responseCode: string;
-  messageStatus: string;
+
+  responseCode: number | null;
+  messageStatus: string | null;
+
+  lastLatency: number | null;
+  lastCheckedAt: Date | null;
+}
+
+export type PayloadCreateService = {
+  name: string;
+  url: string;
+  category: string;
+};
+
+export type PayloadUpdateService = {
+  id: string;
+  name: string;
+  url: string;
+  category: string;
   lastLatency: string;
-  lastCheckedAt: DateValues;
+  lastCheckedAt: string;
 };

@@ -1,5 +1,5 @@
-import ActivityBadge from "@/components/common/activity-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   Table,
   TableBody,
@@ -8,148 +8,214 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useBoardStore } from "@/store/board-store";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+import { useServices } from "@/hooks/useService";
+
 import { formatDistanceToNow } from "date-fns";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Tooltip } from "recharts";
+import type { DataService } from "@/types/service";
 
 export default function Overview() {
-  const tasks = useBoardStore((state) => state.tasks);
+  const { data, isLoading, error } = useServices();
 
-  const columns = useBoardStore((state) => state.columns);
+  const services: DataService[] = data?.data ?? [];
 
-  const columninProgress = useBoardStore((state) => state.columns.inProgress);
-  const inProgressTask = columninProgress.taskIds.map(
-    (taskId) => tasks[taskId],
-  );
+  const totalServices = services.length;
 
-  const columndone = useBoardStore((state) => state.columns.done);
-  const doneTaskList = columndone.taskIds.map((taskId) => tasks[taskId]);
+  const upServices = services.filter(
+    (service) => service.serviceStatus === "UP",
+  ).length;
 
-  const taskList = Object.values(tasks);
+  const downServices = services.filter(
+    (service) => service.serviceStatus === "DOWN",
+  ).length;
 
-  const activities = useBoardStore((state) => state.activities);
-  const recentActivities = activities.slice(0, 6);
+  const averageLatency =
+    services.length > 0
+      ? Math.round(
+          services.reduce(
+            (acc: number, service: DataService) =>
+              acc + (service.lastLatency || 0),
+            0,
+          ) / services.length,
+        )
+      : 0;
 
-  const completionData = doneTaskList
-    .filter((task) => task.completedAt)
-    .reduce<CompletionData[]>((acc, task) => {
-      const day = new Date(task.completedAt!).toLocaleDateString("en-US", {
-        weekday: "short",
-      });
+  const statusData = [
+    {
+      name: "UP",
+      value: upServices,
+      fill: "#22c55e",
+    },
+    {
+      name: "DOWN",
+      value: downServices,
+      fill: "#ef4444",
+    },
+  ];
 
-      const existing = acc.find((d) => d.day === day);
-
-      if (existing) {
-        existing.completed += 1;
-      } else {
-        acc.push({ day, completed: 1 });
-      }
-
-      return acc;
-    }, [])
-    .sort(
-      (a, b) =>
-        new Date(`2024 ${a.day}`).getDay() - new Date(`2024 ${b.day}`).getDay(),
+  if (isLoading) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <p className="text-muted-foreground">Loading services...</p>
+      </div>
     );
+  }
 
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "short",
-  });
-
-  const completedToday =
-    completionData.find((d) => d.day === today)?.completed || 0;
-
-  const COLORS: Record<string, string> = {
-    Todo: "#6366f1",
-    "In Progress": "#f59e0b",
-    Done: "#22c55e",
-  };
-
-  const statusData = Object.values(columns).map((column) => ({
-    name: column.title,
-    value: column.taskIds.length,
-    fill: COLORS[column.title],
-  }));
+  if (error) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <p className="text-red-500">Failed to connect to backend</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Centralized Monitoring Dashboard
+          </h1>
+
+          <p className="text-muted-foreground">
+            Realtime service monitoring system
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-500" />
+
+          <span className="text-sm text-muted-foreground">Live Monitoring</span>
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-sm text-muted-foreground">
-              Completed Today
+              Total Services
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">{completedToday}</p>
+            <p className="text-3xl font-bold">{totalServices}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="text-sm text-muted-foreground">
-              In Progress
+              Services UP
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">{inProgressTask.length}</p>
+            <p className="text-3xl font-bold text-green-500">{upServices}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="text-sm text-muted-foreground">
-              Total Tasks
+              Services DOWN
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">{taskList.length}</p>
+            <p className="text-3xl font-bold text-red-500">{downServices}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">
+              Avg Latency
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <p className="text-3xl font-bold">{averageLatency} ms</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily Task Completion</CardTitle>
-        </CardHeader>
-
-        <CardContent className="h-75">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={completionData}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="completed"
-                stroke="#6366f1"
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Task Status Distribution</CardTitle>
+            <CardTitle>Monitored Services</CardTitle>
           </CardHeader>
 
-          <CardContent className="h-75">
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Service</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Latency</TableHead>
+                  <TableHead>Response</TableHead>
+                  <TableHead>Last Checked</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {services.map((service) => (
+                  <TableRow key={service.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{service.name}</p>
+
+                        <p className="text-sm text-muted-foreground">
+                          {service.url}
+                        </p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <Badge
+                        variant={
+                          service.serviceStatus === "UP"
+                            ? "default"
+                            : "destructive"
+                        }
+                      >
+                        {service.serviceStatus}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell>{service.lastLatency ?? 0} ms</TableCell>
+
+                    <TableCell>{service.responseCode ?? "-"}</TableCell>
+
+                    <TableCell>
+                      {service.lastCheckedAt
+                        ? formatDistanceToNow(new Date(service.lastCheckedAt), {
+                            addSuffix: true,
+                          })
+                        : "-"}
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <Button size="sm">Re-check</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Status Distribution</CardTitle>
+          </CardHeader>
+
+          <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -158,50 +224,11 @@ export default function Overview() {
                   nameKey="name"
                   outerRadius={100}
                   label
-                  fill="#8884d8"
                 />
 
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Task</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead className="text-right">Time</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {recentActivities.map((activity) => (
-                  <TableRow key={activity.id}>
-                    <TableCell className="font-medium">
-                      {activity.taskTitle}
-                    </TableCell>
-
-                    <TableCell>
-                      <ActivityBadge type={activity.type} />
-                    </TableCell>
-
-                    <TableCell className="text-right text-muted-foreground">
-                      {formatDistanceToNow(new Date(activity.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
           </CardContent>
         </Card>
       </div>

@@ -1,14 +1,14 @@
-import type { Task } from "@/types/board";
+import type { DataService } from "@/types/service";
 import { cn } from "@/utils/cn";
 import { parseISO, differenceInDays } from "date-fns";
 
 type Props = {
-  task: Task;
+  data: DataService;
   timelineStart: Date;
   days: number;
 };
 
-export function TimelineRow({ task, timelineStart, days }: Props) {
+export function TimelineRow({ data, timelineStart, days }: Props) {
   const start = parseISO(task.createdAt);
   const end = parseISO(task.deadline);
 
