@@ -1,9 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import Navigation from "../components/common/navigation";
-import Overview from "../features/dashboard/dashboard";
-import List from "../features/list/list";
-import Board from "@/features/services/services";
-import { Timeline } from "@/features/activity/activity";
+import Navigation from "@/components/common/navigation";
+import Dashboard from "@/features/dashboard/dashboard";
+import Services from "@/features/services/services";
+import List from "@/features/list/list";
 
 function App() {
   return (
@@ -14,10 +13,10 @@ function App() {
 
       <div className="max-w-7xl px-8 py-8 space-y-6">
         <Routes>
-          <Route path="/" element={<Overview />} />
-          <Route path="/board" element={<Board />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/service" element={<Services />} />
           <Route path="/list" element={<List />} />
-          <Route path="/timeline" element={<Timeline />} />
+          {/* <Route path="/timeline" element={<Timeline />} /> */}
         </Routes>
       </div>
     </div>
